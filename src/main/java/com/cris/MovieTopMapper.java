@@ -31,8 +31,13 @@ public class MovieTopMapper extends Mapper<LongWritable, Text, Text, NullWritabl
 
         String result = EtlStringUtil.handle(strings);
         if (result != null) {
+            // 自定义数据清洗成功的计数器并自增
+            context.getCounter("ETLCounter", "true").increment(1);
             k.set(result);
             context.write(k, NullWritable.get());
+        } else {
+            // 自定义数据清洗失败并过滤的计数器并自增
+            context.getCounter("ETLCounter", "false").increment(1);
         }
     }
 }
